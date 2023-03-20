@@ -8,7 +8,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 interface ICustomSelect {
   label: string;
   value?: string;
-  options: string[];
+  options: string[] | { value: string | number, label: string }[];
   handleChange: (e: SelectChangeEvent) => void;
 }
 
@@ -23,7 +23,9 @@ export const CustomSelect: FC<ICustomSelect> = ({ label, value, options, handleC
         label={label}
         onChange={handleChange}
       >
-        {options.map(option => <MenuItem value={option} key={option}>{option}</MenuItem>)}
+        {options.map(option => typeof option === "string" ?
+          <MenuItem value={option} key={option}>{option}</MenuItem> :
+          <MenuItem value={option.value} key={option.value}>{option.label}</MenuItem>)}
       </Select>
     </FormControl>
   );

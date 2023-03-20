@@ -15,10 +15,12 @@ export const getResidents = async () => {
       throw new Error("User unauthorized")
     }
   } catch (e) {
+    const error = e as { message: string };
+    throw new Error(error.message);
   }
 }
 
-export const createResident = async (program: Omit<TDataResident, "attendance" | "id" | "applicantId" | "createdAt" | "updatedAt" | "preferredName">) => {
+export const createResident = async (program: Omit<TDataResident, "attendance" | "id" | "applicantId" | "createdAt" | "updatedAt" | "preferredName" | "status">) => {
   try {
     const headers = authHeader();
 
@@ -29,5 +31,7 @@ export const createResident = async (program: Omit<TDataResident, "attendance" |
       throw new Error("User unauthorized")
     }
   } catch (e) {
+    const error = e as { message: string };
+    throw new Error(error.message);
   }
 }

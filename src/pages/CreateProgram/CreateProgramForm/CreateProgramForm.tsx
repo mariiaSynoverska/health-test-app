@@ -27,6 +27,7 @@ export const CreateProgramForm = () => {
   const [dimension, setDimension] = useState<string>();
   const [allDay, setAllDay] = useState<boolean>(false);
   const [isRepeated, setIsRepeated] = useState<boolean>(false);
+  const [error, setError] = useState<string>();
 
   const handleChangeLevelOfCare = useCallback((e: SelectChangeEvent) => {
     const { value } = e.target;
@@ -43,21 +44,28 @@ export const CreateProgramForm = () => {
   }, []);
 
   const handleCreate = useCallback(async () => {
-    if (!name || !location || !startDate || !endDate || !levelOfCare.length || !hobbies || !facilitators || !tags || !dimension) return;
+    try {
+      if (!name || !location || !startDate || !endDate || !levelOfCare.length || !hobbies || !facilitators || !tags || !dimension) return;
 
-    await createProgram({
-      name,
-      location,
-      start: startDate.format('YYYY-MM-DD'),
-      end: endDate.format('YYYY-MM-DD'),
-      hobbies: hobbies.split(','),
-      levelOfCare,
-      facilitators: facilitators.split(','),
-      dimension,
-      tags: tags.split(','),
-      allDay,
-      isRepeated,
-    });
+      await createProgram({
+        name,
+        location,
+        start: startDate.format('YYYY-MM-DD'),
+        end: endDate.format('YYYY-MM-DD'),
+        hobbies: hobbies.split(','),
+        levelOfCare,
+        facilitators: facilitators.split(','),
+        dimension,
+        tags: tags.split(','),
+        allDay,
+        isRepeated,
+      });
+
+    } catch (e) {
+      const error = e as { message: string };
+      setError(error.message);
+    }
+
   }, [name, location, startDate, endDate, levelOfCare, hobbies, facilitators, tags, dimension, allDay, isRepeated]);
 
   const disableCreate = useMemo(() => {
@@ -178,6 +186,7 @@ export const CreateProgramForm = () => {
       >
         Create
       </Button>
+      {error && <div>Error: {error}</div>}
     </Box>
   );
 };

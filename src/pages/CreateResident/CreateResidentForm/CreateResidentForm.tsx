@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { Dayjs } from 'dayjs';
 
 import Box from '@mui/material/Box';
@@ -10,20 +10,23 @@ import { DatePicker } from '../../../components/DatePicker';
 import { CustomSelect } from '../../../components/CustomSelect';
 
 import { createResident } from '../../../api';
-import {
-  EAmbulation, ELevelOfCare, EStatus,
-} from '../../../types';
+import { EAmbulation, ELevelOfCare } from '../../../types';
 
-export const CreateResidentForm = () => {
+interface ICreateResidentForm {
+  handleChangeResidentId: (residentId: number) => void;
+}
+
+
+export const CreateResidentForm: FC<ICreateResidentForm> = ({ handleChangeResidentId }) => {
   // TODO: refactor with using formik
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [room, setRoom] = useState<string>('');
   const [birthDate, setBirthDate] = useState<Dayjs>();
   const [moveInDate, setMoveInDate] = useState<Dayjs>();
-  const [status, setStatus] = useState<EStatus>();
   const [ambulation, setAmbulation] = useState<EAmbulation>();
   const [levelOfCare, setLevelOfCare] = useState<ELevelOfCare>();
+  const [error, setError] = useState<string>();
 
   const handleChangeAmbulation = useCallback((e: SelectChangeEvent) => {
     setAmbulation(e.target.value as EAmbulation);
@@ -31,10 +34,6 @@ export const CreateResidentForm = () => {
 
   const handleChangeLevelOfCare = useCallback((e: SelectChangeEvent) => {
     setLevelOfCare(e.target.value as ELevelOfCare);
-  }, []);
-
-  const handleChangeStatus = useCallback((e: SelectChangeEvent) => {
-    setStatus(e.target.value as EStatus);
   }, []);
 
   const handleBirthDate = useCallback((value: Dayjs) => {
@@ -46,25 +45,30 @@ export const CreateResidentForm = () => {
   }, []);
 
   const handleCreate = useCallback(async () => {
-    if (!ambulation || !levelOfCare || !status || !birthDate || !moveInDate) return;
+    if (!ambulation || !levelOfCare || !birthDate || !moveInDate) return;
 
-    await createResident({
-      firstName,
-      lastName,
-      name: `${firstName} ${lastName}`,
-      birthDate: birthDate.format('YYYY-MM-DD'),
-      moveInDate: moveInDate.format('YYYY-MM-DD'),
-      room,
-      ambulation,
-      levelOfCare,
-      status,
-    });
-  }, [ambulation, levelOfCare, status, firstName, lastName, birthDate, moveInDate, room]);
+    try {
+      const { residentId } = await createResident({
+        firstName,
+        lastName,
+        name: `${firstName} ${lastName}`,
+        birthDate: birthDate.format('YYYY-MM-DD'),
+        moveInDate: moveInDate.format('YYYY-MM-DD'),
+        room,
+        ambulation,
+        levelOfCare,
+      })
+      handleChangeResidentId(residentId)
+    } catch (e) {
+      const error = e as { message: string };
+      setError(error.message);
+    }
+  }, [ambulation, levelOfCare, birthDate, moveInDate, firstName, lastName, room, handleChangeResidentId]);
 
   const disableCreate = useMemo(
     () => {
-      return !firstName || !lastName || !room || !ambulation || !levelOfCare || !status || !birthDate || !moveInDate;
-    }, [ambulation, birthDate, firstName, lastName, levelOfCare, moveInDate, room, status]);
+      return !firstName || !lastName || !room || !ambulation || !levelOfCare || !birthDate || !moveInDate;
+    }, [ambulation, birthDate, firstName, lastName, levelOfCare, moveInDate, room]);
 
   return (
     <Box
@@ -94,21 +98,6 @@ export const CreateResidentForm = () => {
           onChange={(e) => setLastName(e.target.value)}
         />
       </Box>
-      <Box component="div">
-        <TextField
-          required
-          id="outlined-required"
-          label="Room"
-          value={room}
-          onChange={(e) => setRoom(e.target.value)}
-        />
-        <CustomSelect
-          value={status}
-          label="Status"
-          options={Object.values(EStatus)}
-          handleChange={handleChangeStatus}
-        />
-      </Box>
       <Box>
         <DatePicker
           label="Birth Date"
@@ -135,6 +124,15 @@ export const CreateResidentForm = () => {
           handleChange={handleChangeLevelOfCare}
         />
       </Box>
+      <Box component="div">
+        <TextField
+          required
+          id="outlined-required"
+          label="Room"
+          value={room}
+          onChange={(e) => setRoom(e.target.value)}
+        />
+      </Box>
       <Button
         variant="contained"
         sx={{ m: 1 }}
@@ -144,6 +142,7 @@ export const CreateResidentForm = () => {
       >
         Create
       </Button>
+      {error && <div>Error: {error}</div>}
     </Box>
   );
 };
