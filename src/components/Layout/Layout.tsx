@@ -16,30 +16,28 @@ interface ILayout {
 };
 
 export const Layout: FC<ILayout> = ({ title, children }) => {
-  const [header, setHeader] = useState(() => authHeader())
+  const [header, setHeader] = useState(() => authHeader());
 
   const handleLogin = useCallback(async () => {
     await getToken(config.TEST_USER);
     setHeader(authHeader());
   }, []);
 
-  return (
-    <Fragment>
-      <header className={styles.header}>
-        <img src={logo} alt="Health care" className={styles.logo} />
-        <Nav />
-        <div className={styles.login}>
-          {!header ? <Button
-            variant="contained"
-            sx={{ m: 1 }}
-            size="medium"
-            onClick={handleLogin}>Login</Button> : <span>{config.TEST_USER}</span>}
-        </div>
-      </header>
-      <main className={styles.main}>
-        <h1 className={styles.title}>{title}</h1>
-        {children}
-      </main>
-    </Fragment>
-  );
+  return <>
+    <header className={styles.header}>
+      <img src={logo} alt="Health care" className={styles.logo} />
+      <Nav />
+      <div className={styles.login}>
+        {!header ? <Button
+          variant="contained"
+          sx={{ m: 1 }}
+          size="medium"
+          onClick={handleLogin}>Login</Button> : <span>{config.TEST_USER}</span>}
+      </div>
+    </header>
+    <main className={styles.main}>
+      <h1 className={styles.title}>{title}</h1>
+      {children}
+    </main>
+  </>
 }

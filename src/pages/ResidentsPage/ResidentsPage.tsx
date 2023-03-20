@@ -5,11 +5,13 @@ import { useData } from '../../hooks/useData';
 import { DataTableCollapse } from '../../components/DataTableCollapse';
 
 export function ResidentsPage() {
-  const { residents } = useData();
+  const { isLoading, isError, residents } = useData();
 
   return (
     <Layout title="Residents">
-      {residents.length ? <DataTableCollapse rows={residents} executedHeaders={["attendance"]} /> : <div>No recipients found</div>}
+      {isLoading && "Loading..."}
+      {isError && "Something went wrong"}
+      {residents.length ? <DataTableCollapse rows={residents} executedHeaders={["attendance"]} /> : ""}
     </Layout>
   );
 }

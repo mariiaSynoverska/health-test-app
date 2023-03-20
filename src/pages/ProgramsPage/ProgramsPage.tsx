@@ -4,11 +4,13 @@ import { Layout } from '../../components/Layout';
 import { useData } from '../../hooks/useData';
 
 export function ProgramsPage() {
-  const { programs } = useData();
+  const { isLoading, isError, programs } = useData();
 
   return (
     <Layout title="Programs">
-      {programs.length ? <DataTableCollapse rows={programs} executedHeaders={["attendance"]} /> : <div>No programs found</div>}
+      {isLoading && "Loading..."}
+      {isError && "Something went wrong"}
+      {programs.length ? <DataTableCollapse rows={programs} executedHeaders={["attendance"]} /> : ""}
     </Layout>
   );
 }
