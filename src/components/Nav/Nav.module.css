@@ -1,0 +1,19 @@
+.nav {
+  display: flex;
+  padding: 0;
+  margin: 0;
+}
+
+.navItem {
+  list-style: none;
+  padding: 10px;
+}
+.navItem a {
+  text-decoration: none;
+  color: #000000;
+  font-weight: 500;
+}
+.navItem a:hover {
+  text-decoration: none;
+  color: #084182;
+}
