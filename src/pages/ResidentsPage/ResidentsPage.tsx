@@ -10,7 +10,7 @@ export function ResidentsPage() {
   return (
     <Layout title="Residents">
       {isLoading && "Loading..."}
-      {isError && "Something went wrong"}
+      {isError && "Something went wrong!"}
       {residents.length ? <DataTableCollapse rows={residents} executedHeaders={["attendance"]} /> : ""}
     </Layout>
   );

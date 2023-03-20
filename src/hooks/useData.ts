@@ -9,6 +9,8 @@ type TData = {
   programs: TProgram[]
   isLoading: boolean,
   isError: boolean,
+  refetchPrograms: () => void;
+  refetchResidents: () => void;
 }
 
 export const useData = (): TData => {
@@ -19,6 +21,8 @@ export const useData = (): TData => {
     isLoading: programsRes.isLoading || residentsRes.isLoading,
     isError: programsRes.isError || residentsRes.isError,
     residents: residentsRes.data && programsRes.data ? generateResidents(residentsRes.data, programsRes.data) : [],
-    programs: residentsRes.data && programsRes.data ? generatePrograms(programsRes.data, residentsRes.data) : []
+    programs: residentsRes.data && programsRes.data ? generatePrograms(programsRes.data, residentsRes.data) : [],
+    refetchPrograms: programsRes.refetch,
+    refetchResidents: residentsRes.refetch,
   };
 };

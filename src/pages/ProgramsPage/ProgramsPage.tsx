@@ -9,7 +9,7 @@ export function ProgramsPage() {
   return (
     <Layout title="Programs">
       {isLoading && "Loading..."}
-      {isError && "Something went wrong"}
+      {isError && "Something went wrong!"}
       {programs.length ? <DataTableCollapse rows={programs} executedHeaders={["attendance"]} /> : ""}
     </Layout>
   );

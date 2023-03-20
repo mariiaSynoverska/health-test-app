@@ -15,6 +15,8 @@ export const getPrograms = async () => {
       throw new Error("User unauthorized")
     }
   } catch (e) {
+    const error = e as { message: string };
+    throw new Error(error.message);
   }
 }
 

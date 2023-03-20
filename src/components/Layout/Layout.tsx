@@ -6,6 +6,7 @@ import { Nav } from '../Nav';
 
 import { authHeader } from '../../service/auth';
 import { getToken, config } from '../../api';
+import { useData } from '../../hooks/useData';
 
 import styles from "./Layout.module.css";
 import logo from "../../assets/images/logo.jpeg";
@@ -18,10 +19,14 @@ interface ILayout {
 export const Layout: FC<ILayout> = ({ title, children }) => {
   const [header, setHeader] = useState(() => authHeader());
 
+  const { isError, refetchPrograms, refetchResidents } = useData();
+
   const handleLogin = useCallback(async () => {
     await getToken(config.TEST_USER);
     setHeader(authHeader());
-  }, []);
+    refetchPrograms();
+    refetchResidents()
+  }, [refetchPrograms, refetchResidents]);
 
   return <>
     <header className={styles.header}>
@@ -38,6 +43,9 @@ export const Layout: FC<ILayout> = ({ title, children }) => {
     <main className={styles.main}>
       <h1 className={styles.title}>{title}</h1>
       {children}
+      <div>
+        {!header && isError && "Login to get data."}
+      </div>
     </main>
   </>
 }
